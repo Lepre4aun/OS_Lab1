@@ -38,7 +38,7 @@ namespace OSfirst
             Console.Write("Task 2:");
             Console.Read();
             // создаем каталог для файла
-            string path = @"C:\OS1";
+            string path = @"C:\LAB1";
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)
             {
@@ -182,7 +182,7 @@ namespace OSfirst
             Console.Write("Task 5:");
             Console.Read();
             Console.WriteLine();
-            string somepath = @"C:\OS1\zip";
+            string somepath = @"C:\LAB1\zip";
             DirectoryInfo dirInfoo = new DirectoryInfo(somepath);
             if (!dirInfoo.Exists)
             {
@@ -190,14 +190,14 @@ namespace OSfirst
             }
             Console.Read();
             using (FileStream fstream = new FileStream($@"{path}\Schrek.txt", FileMode.CreateNew)) { }
-            string sourceFolder = @"C:\OS1\zip\";
-            string zipFile = @"C:\OS1\zip.zip";
+            string sourceFolder = @"C:\LAB1\zip\";
+            string zipFile = @"C:\LAB1\zip.zip";
             ZipFile.CreateFromDirectory(sourceFolder, zipFile);
             Console.WriteLine($"Папка {sourceFolder} создана и конвертирована в архив {zipFile}");
             Console.Read();
             using (ZipArchive zipArchive = ZipFile.Open(zipFile, ZipArchiveMode.Update))
             {
-                zipArchive.CreateEntryFromFile(@"C:\OS1\Schrek.txt", "Schrek.txt");
+                zipArchive.CreateEntryFromFile(@"C:\LAB1\Schrek.txt", "Schrek.txt");
             }
             Console.Read();
             Console.Write($"Schrek.txt добавлен в архив {zipFile}\n");
