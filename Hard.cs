@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
+
+
 namespace OSfirst
 {
     class Person
@@ -18,96 +20,110 @@ namespace OSfirst
     {
         static async Task Main(string[] args)
         {
-            Console.Write("Task 1 :");
+            Console.Write("Task 1:");
             Console.ReadLine();
             DriveInfo[] drives = DriveInfo.GetDrives();
             foreach (DriveInfo drive in drives)
             {
-                Console.WriteLine($"Name : {drive.Name}");
-                Console.WriteLine($"Type : {drive.DriveType}");
+                Console.WriteLine($"Название: {drive.Name}");
+                Console.WriteLine($"Тип: {drive.DriveType}");
                 if (drive.IsReady)
                 {
-                    Console.WriteLine($"Disk size : {drive.TotalSize}");
-                    Console.WriteLine($"Free Space : {drive.TotalFreeSpace}");
-                    Console.WriteLine($"Lable : {drive.VolumeLabel}");
+                    Console.WriteLine($"Объем диска: {drive.TotalSize}");
+                    Console.WriteLine($"Свободное пространство: {drive.TotalFreeSpace}");
+                    Console.WriteLine($"Метка: {drive.VolumeLabel}");
                 }
                 Console.WriteLine();
             }
-
-            Console.Write("Task 2 :");
+            Console.Write("Task 2:");
             Console.Read();
             // создаем каталог для файла
-            string path = @"C:\LAB_1";
+            string path = @"C:\OS1";
             DirectoryInfo dirInfo = new DirectoryInfo(path);
             if (!dirInfo.Exists)
             {
                 dirInfo.Create();
-                Console.WriteLine("Folder created successfully");
+                Console.WriteLine("Папка успешно создана");
             }
             else
             {
-                Console.WriteLine("The folder already exists");
+                Console.WriteLine("Папка уже существует");
             }
             Console.Read();
-            Console.WriteLine("Enter a line to write to the file :");
+            Console.WriteLine("Введите строку для записи в файл:");
             string text = Console.ReadLine();
-            using (FileStream fstream = new FileStream($@"{path}\trial.txt", FileMode.Append))
+
+            // запись в файл
+            using (FileStream fstream = new FileStream($@"{path}\test.txt", FileMode.Append))
             {
                 byte[] array = System.Text.Encoding.Default.GetBytes(text);
+                // асинхронная запись массива байтов в файл
                 await fstream.WriteAsync(array, 0, array.Length);
+                //Console.WriteLine("Текст записан в файл");
             }
-            using (FileStream fstream = File.OpenRead($@"{path}\trial.txt"))
+
+            // чтение из файла
+            using (FileStream fstream = File.OpenRead($@"{path}\test.txt"))
             {
                 byte[] array = new byte[fstream.Length];
+                // асинхронное чтение файла
                 await fstream.ReadAsync(array, 0, array.Length);
-                string textFromFile = System.Text.Encoding.Default.GetString(array);
-                Console.WriteLine($"Text from the file : {textFromFile}");
-            }
-            File.Delete($@"{path}\trial.txt");
-            Console.WriteLine("File trial.txt deleted");
-            Console.WriteLine();
 
-            Console.Write("Task 3 :");
+                string textFromFile = System.Text.Encoding.Default.GetString(array);
+                Console.WriteLine($"Текст из файла: {textFromFile}");
+            }
+            Console.WriteLine("Удалить файлы: 1 - да, 0 - нет");
+            string Check1 = Console.ReadLine();
+            if (Check1 == "1")
+            {
+                File.Delete($@"{path}\test.txt");
+                Console.WriteLine("Файл test.txt удалён");
+                Console.WriteLine();
+            }
+
+            Console.Write("Task 3:");
             Console.Read();
             using (FileStream fstream = new FileStream($@"{path}\user.json", FileMode.OpenOrCreate))
             {
-                Person Ember = new Person() { Name = "Ember", Age = 23 };
-                Person Joan = new Person() { Name = "Joan", Age = 25 };
-                await JsonSerializer.SerializeAsync<Person>(fstream, Ember);
-                Console.WriteLine("The file has been created and already contains data");
+                Person Egor = new Person() { Name = "Viva", Age = 27 };
+                await JsonSerializer.SerializeAsync<Person>(fstream, Egor);
+                Console.WriteLine("Файл был создан и уже содержит данные");
             }
             using (FileStream fstream = File.OpenRead($@"{path}\user.json"))
             {
                 Person restoredPerson = await JsonSerializer.DeserializeAsync<Person>(fstream);
-                Console.WriteLine($"Name : {restoredPerson.Name}  Age : {restoredPerson.Age}");
+                Console.WriteLine($"Name: {restoredPerson.Name}  Age: {restoredPerson.Age}");
             }
-            File.Delete($@"{path}\user.json");
-            Console.WriteLine("The user file.json deleted");
-            Console.WriteLine();
+            Console.WriteLine("Удалить файлы: 1 - да, 0 - нет");
+            string Check2 = Console.ReadLine();
+            if (Check2 == "1")
+            {
+                File.Delete($@"{path}\user.json");
+                Console.WriteLine("Файл user.json удалён");
+                Console.WriteLine();
+            }
             Console.Read();
-
-            Console.Write("Task 4 :");
+            Console.Write("Task 4:");
             Console.Read();
             Console.WriteLine();
             Console.Read();
             XDocument xdoc = new XDocument(new XElement("people",
                 new XElement("person",
-                    new XAttribute("name", "Frank-Valter"),
-                    new XAttribute("name", "Franky"),
-                    new XElement("company", "Bosch"),
-                    new XElement("age", 66)),
+                    new XAttribute("name", "Bogdan"),
+                    new XElement("company", "Shaurma Moscow"),
+                    new XElement("age", 36)),
                 new XElement("person",
-                    new XAttribute("name", "Mun Chge In"),
-                    new XAttribute("name", "Mumchik"),
-                    new XElement("company", "Naver"),
-                    new XElement("age", 69))));
+                    new XAttribute("name", "Matvei"),
+                    new XElement("company", "Simps Artillerists Offline"),
+                    new XElement("age", 17))));
             xdoc.Save($@"{path}\people.xml");
             Console.WriteLine("people.xml created");
-            Console.WriteLine("Enter a name to add to the file :");
+
+            Console.WriteLine("Введите имя для добавления в файл:");
             string tempname = Console.ReadLine();
-            Console.WriteLine("Enter the company to add to the file :");
+            Console.WriteLine("Введите компанию для добавления в файл:");
             string tempcompany = Console.ReadLine();
-            Console.WriteLine("Enter the age to add to the file :");
+            Console.WriteLine("Введите возраст для добавления в файл:");
             string tempage = Console.ReadLine();
             XmlDocument xDoc = new XmlDocument();
             xDoc.Load($@"{path}\people.xml");
@@ -127,7 +143,9 @@ namespace OSfirst
             personElem.AppendChild(ageElem);
             xRoot?.AppendChild(personElem);
             xDoc.Save($@"{path}\people.xml");
+
             Console.WriteLine("people.xml edited\n");
+
             XmlDocument xxDoc = new XmlDocument();
             xDoc.Load($@"{path}\people.xml");
             XmlElement xxRoot = xDoc.DocumentElement;
@@ -143,57 +161,73 @@ namespace OSfirst
                 {
                     if (childnode.Name == "company")
                     {
-                        Console.WriteLine($"Company : {childnode.InnerText}");
+                        Console.WriteLine($"Компания: {childnode.InnerText}");
                     }
                     if (childnode.Name == "age")
                     {
-                        Console.WriteLine($"Age : {childnode.InnerText}");
+                        Console.WriteLine($"Возраст: {childnode.InnerText}");
                     }
                 }
                 Console.WriteLine();
             }
-            File.Delete($@"{path}\people.xml");
-            Console.WriteLine("File people.xml deleted");
-            Console.WriteLine();
+            Console.WriteLine("Удалить файлы: 1 - да, 0 - нет");
+            string Check3 = Console.ReadLine();
+            if (Check3 == "1")
+            {
+                File.Delete($@"{path}\people.xml");
+                Console.WriteLine("Файл people.xml удалён");
+                Console.WriteLine();
+            }
 
-            Console.Write("Task 5 :");
+            Console.Write("Task 5:");
             Console.Read();
             Console.WriteLine();
-            string somepath = @"C:\LAB_1\zip";
+            string somepath = @"C:\OS1\zip";
             DirectoryInfo dirInfoo = new DirectoryInfo(somepath);
             if (!dirInfoo.Exists)
             {
                 dirInfoo.Create();
             }
             Console.Read();
-            using (FileStream fstream = new FileStream($@"{path}\keks.txt", FileMode.CreateNew)) { }
-            string sourceFolder = @"C:\LAB_1\zip\";
-            string zipFile = @"C:\LAB_1\zip.zip";
+            using (FileStream fstream = new FileStream($@"{path}\Schrek.txt", FileMode.CreateNew)) { }
+            string sourceFolder = @"C:\OS1\zip\";
+            string zipFile = @"C:\OS1\zip.zip";
             ZipFile.CreateFromDirectory(sourceFolder, zipFile);
-            Console.WriteLine($"The {sourceFolder} folder has been created and converted to an archive {zipFile}");
+            Console.WriteLine($"Папка {sourceFolder} создана и конвертирована в архив {zipFile}");
             Console.Read();
             using (ZipArchive zipArchive = ZipFile.Open(zipFile, ZipArchiveMode.Update))
             {
-                zipArchive.CreateEntryFromFile(@"C:\LAB_1\lectures.txt", "lectures.txt");
-                zipArchive.CreateEntryFromFile(@"C:\LAB_1\practices.txt", "practices.txt");
+                zipArchive.CreateEntryFromFile(@"C:\OS1\Schrek.txt", "Schrek.txt");
             }
             Console.Read();
-            Console.Write($"lectures.txt added to the archive {zipFile}\n");
-            Console.Write($"practices.txt added to the archive {zipFile}\n");
+            Console.Write($"Schrek.txt добавлен в архив {zipFile}\n");
             Console.Read();
             ZipFile.ExtractToDirectory(zipFile, sourceFolder);
-            Console.WriteLine($"Archive {zipFile} unpacked to {sourceFolder}");
+            Console.WriteLine($"Архив {zipFile} распакован в папку {sourceFolder}");
             Console.WriteLine();
             Console.Read();
-            foreach (FileInfo file in dirInfo.GetFiles())
+
+            Console.WriteLine("Удалить файлы: 1 - да, 0 - нет");
+            string Check4 = Console.ReadLine();
+            if (Check4 == "1")
             {
-                file.Delete();
+
+                foreach (FileInfo file in dirInfo.GetFiles())
+                {
+                    file.Delete();
+                }
+                Directory.Delete(sourceFolder, true);
+                Console.WriteLine("Файлы из Task удалены");
+                Console.Read();
             }
-            Directory.Delete(sourceFolder, true);
-            Console.WriteLine("Files from Task 5 deleted");
-            Console.Read();
-            Directory.Delete(path, true);
-            Console.WriteLine("LAB_1 has been deleted from your computer");
+            Console.WriteLine("Удалить файлы: 1 - да, 0 - нет");
+            string Check5 = Console.ReadLine();
+            if (Check5 == "1")
+            {
+                Directory.Delete(path, true);
+                Console.WriteLine("OS1 удалена с вашего компьютера :D");
+            }
+            Console.WriteLine();
         }
     }
 }
